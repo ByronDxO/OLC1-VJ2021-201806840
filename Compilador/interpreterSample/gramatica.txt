@@ -1,0 +1,23 @@
+init            : instrucciones
+
+instrucciones    : instrucciones instruccion
+            | instruccion
+
+instruccion      : imprimir_instr
+            
+                    # print ( expresion ) ;
+imprimir_instr     : RPRINT PARA expresion PARC PUNTOCOMA
+
+expresion : expresion MAS expresion
+            | expresion MENOS expresion
+            | expresion MENORQUE expresion
+            | expresion MAYORQUE expresion
+            | expresion IGUALIGUAL expresion
+            | expresion AND expresion
+            | expresion OR expresion
+            | MENOS expresion %prec UMENOS 
+            | NOT expresion %prec UNOT 
+            | PARA expresion PARC 
+            | ENTERO
+            | DECIMAL
+            | CADENA

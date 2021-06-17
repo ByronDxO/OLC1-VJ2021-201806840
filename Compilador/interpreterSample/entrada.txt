@@ -1,0 +1,132 @@
+
+iNt valor1 = 43243;
+int contadorA = 0;
+
+func HolaMundo(){
+    print("HolaMundo");
+}
+
+
+
+main(){
+    HolaMundo();
+    print(valor1);
+    HolaMundo2("Compi 1 :0");
+    print(valor1)
+    print(5 + "Hola");
+    print(5 + 3+234+324+34+3);
+    print(-(500 + 32 - 600));
+    print(-(500 - 600) == 100)
+    print(! "7" == 7 && (100 == 10 + 90) );
+    int variable = 5 + 5;
+    print(variable)
+    print(VaRiaBle)
+    String cad1 = "Soy una cadena\nUn salto de linea."
+    string cad2 = variable + cad1;
+    print(cad2)
+    print(cad2 + cad1);
+    print("-------------------------------")
+    print(cad2);
+    cad2 = cad2 + cad1;
+    print(cad2);
+    print(true || false)
+    print(false)
+    int bandera = 100;
+    if((5+5)<(2+1)){
+        print("Entra al if");
+    }
+    else if(bandera + 50 > 300){
+        print("Entro al else if xd")
+    }
+    else if(false){
+        print("Entro al else if xddddd")
+    }
+    else if(bandera + 50 > 300){
+        print("Entro al else if xd")
+    }
+    else{
+        if(bandera - 100 == 0){
+            print("Entro a un if en un else que loko :0")
+            if(bandera - 100 == 0){
+                print("Entro a un if en un else que loko :0")
+                print(bandera)
+                print("Cambio de bandera")
+                int bandera = 50;
+                print(bandera)
+                if(bandera - 100 == 0){
+                    print("Entro a un if en un else que loko :0")
+                }
+            }
+            print("valor persistente")
+            print(bandera)
+        }
+        print("No entro a ningun if D:")
+    }
+
+    int num = 0;
+    while(num < 10){
+        print("Iteracion -> " + (num + 1))
+        if(num == 7){
+            break;
+        }
+        num = num + 1;
+    }
+    break;
+    num = 0;
+    while(num < 10){
+        print("Iteracion -> " + (num + 1))
+        num = num + 1;
+    }
+    print(suma(500, 100))
+    print("La suma de 500 + 100 es igual a: " + suma(500, 100))
+    int suma = suma5(1, 2,3,4,5);
+    print(suma);
+    print(ackermann(3,4))
+    pRiNT(contadora);
+}
+
+func HolaMundo2(string val){
+    print("HolaMundo2 " + val);
+}
+
+func Suma(int a, int b){
+    return a + b;
+}
+
+func Suma5(int a, int b, int c, int d, int e){
+    return a +b+c+d+e
+}
+
+func factorial(int num){
+    if(num == 0){
+        return 1;
+    }
+    else{
+        return num * factorial(num-1)
+    }   
+}
+
+func par(int nump) {
+    if (nump == 0) {
+        return true;
+    }
+    return impar(nump - 1);
+}
+
+func impar(int numi) {
+    if (numi == 0) {
+        return false;
+    }
+    return par(numi - 1);
+}
+
+func ackermann(int m, int n){
+    contadorA = contadorA + 1;
+    if (m == 0){
+        return n + 1;
+    } else if (m > 0 && n == 0){
+        return ackermann(m-1, 1)
+    } else{
+        return ackermann(m-1, ackermann(m, n-1))
+    }
+}
