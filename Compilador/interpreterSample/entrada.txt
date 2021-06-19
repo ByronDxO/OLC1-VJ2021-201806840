@@ -35,6 +35,8 @@ main(){
     print(bandera+"ahuevo que si");
     if(8 <= 8){
         print("si sale asdasdasdasd");
+        bandera++;
+        print(bandera);
     }
     if((5+5)<(2+1)){
         print("Entra al if");

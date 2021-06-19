@@ -13,6 +13,7 @@ reservadas = {
     'float'     : 'RFLOAT',
     'string'    : 'RSTRING',
     'boolean'   : 'RBOOLEAN',
+    'char'      : 'RCHAR',
     'print'     : 'RPRINT',
     'if'        : 'RIF',
     'else'      : 'RELSE',
@@ -55,6 +56,9 @@ tokens  = [
     'MOD',
     'INCREMENTO',
     'DECREMENTO',
+    'COMENTARIO_SIMPLE',
+    'COMENTARIO_MULTI',
+
 
 ] + list(reservadas.values())
 
@@ -121,7 +125,10 @@ def t_CADENA(t):
 def t_COMENTARIO_SIMPLE(t):
     r'\#.*\n'
     t.lexer.lineno += 1
-
+#COMENTARIO MULTILINEA
+def t_COMENTARIO_MULTI(t):
+    r'\#\*(.|\n)*?\*\#'
+    t.lexer.lineno += t.value.count("\n")
 # Caracteres ignorados
 t_ignore = " \t"
 
@@ -176,7 +183,7 @@ from Instrucciones.Main import Main
 from Instrucciones.Funcion import Funcion
 from Instrucciones.Llamada import Llamada
 from Instrucciones.Return import Return
-
+from Instrucciones.Decremento_incremento import Decremento_incremento
 def p_init(t) :
     'init            : instrucciones'
     t[0] = t[1]
@@ -202,6 +209,7 @@ def p_instruccion(t) :
     '''instruccion      : imprimir_instr finins
                         | declaracion_instr finins
                         | asignacion_instr finins
+                        | incre_decre_ins finins
                         | if_instr
                         | while_instr
                         | break_instr finins
@@ -220,6 +228,17 @@ def p_instruccion_error(t):
     'instruccion        : error PUNTOCOMA'
     errores.append(Excepcion("Sintáctico","Error Sintáctico." + str(t[1].value) , t.lineno(1), find_column(input, t.slice[1])))
     t[0] = ""
+#///////////////////////////////////////decre_incre//////////////////////////////////////////////////
+def p_decremento_incremento(t):
+    ''' incre_decre_ins : ID DECREMENTO
+                        | ID INCREMENTO'''
+
+    if t[2] == '--':
+        t[0] = Decremento_incremento(t[1], OperadorAritmetico.DECREMENTO, t.lineno(1), find_column(input, t.slice[1]))
+    elif t[2] == '++':
+        t[0] = Decremento_incremento(t[1], OperadorAritmetico.INCREMENTO, t.lineno(1), find_column(input, t.slice[1]))
+
+
 #///////////////////////////////////////IMPRIMIR//////////////////////////////////////////////////
 
 def p_imprimir(t) :
