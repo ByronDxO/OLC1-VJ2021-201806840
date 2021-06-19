@@ -13,7 +13,7 @@ reservadas = {
     'float'     : 'RFLOAT',
     'string'    : 'RSTRING',
     'boolean'   : 'RBOOLEAN',
-    'char'      : 'RCHAR',
+    'var'       : 'RVAR',
     'print'     : 'RPRINT',
     'if'        : 'RIF',
     'else'      : 'RELSE',
@@ -24,6 +24,7 @@ reservadas = {
     'main'      : 'RMAIN',
     'func'      : 'RFUNC',
     'return'    : 'RRETURN',
+    'null'      : 'RNULL',
 
 }
 
@@ -56,8 +57,10 @@ tokens  = [
     'MOD',
     'INCREMENTO',
     'DECREMENTO',
-    'COMENTARIO_SIMPLE',
     'COMENTARIO_MULTI',
+    'COMENTARIO_SIMPLE',
+    'CHARACTER'
+
 
 
 ] + list(reservadas.values())
@@ -120,15 +123,25 @@ def t_CADENA(t):
     t.value = t.value.replace('\\t', '\t')
     t.value = t.value.replace("\\'", '\'')
     return t
-
+def t_CHARACTER(t):
+    r"""\' (\\'| \\\\ | \\n | \\t | \\r | \\" | .)? \'"""
+    t.value = t.value[1:-1] # remuevo las comillas
+    t.value = t.value.replace('\\n', '\n')
+    t.value = t.value.replace('\\r', '\r')
+    t.value = t.value.replace('\\\\', '\\')
+    t.value = t.value.replace('\\"', '\"')
+    t.value = t.value.replace('\\t', '\t')
+    t.value = t.value.replace("\\'", '\'')
+    return t
+def t_COMENTARIO_MULTI(t):
+    r'\#\*(.|\n)*?\*\#'
+    t.lexer.lineno += t.value.count("\n")
 # Comentario simple // ...
 def t_COMENTARIO_SIMPLE(t):
     r'\#.*\n'
     t.lexer.lineno += 1
 #COMENTARIO MULTILINEA
-def t_COMENTARIO_MULTI(t):
-    r'\#\*(.|\n)*?\*\#'
-    t.lexer.lineno += t.value.count("\n")
+
 # Caracteres ignorados
 t_ignore = " \t"
 
@@ -355,7 +368,9 @@ def p_tipo(t) :
     '''tipo     : RINT
                 | RFLOAT
                 | RSTRING
-                | RBOOLEAN '''
+                | RBOOLEAN
+                | RVAR
+                '''
     if t[1].lower() == 'int':
         t[0] = TIPO.ENTERO
     elif t[1].lower() == 'float':
@@ -366,6 +381,8 @@ def p_tipo(t) :
         t[0] = TIPO.BOOLEANO
     elif t[1].lower() == 'char':
         t[0] = TIPO.CHARACTER
+    elif t[1].lower() == 'var':
+        t[0] = TIPO.NULO
 
 #///////////////////////////////////////EXPRESION//////////////////////////////////////////////////
 
@@ -449,8 +466,11 @@ def p_expresion_decimal(t):
 
 def p_expresion_cadena(t):
     '''expresion : CADENA'''
-    t[0] = Primitivos(TIPO.CADENA,str(t[1]).replace('\\n', '\n'), t.lineno(1), find_column(input, t.slice[1]))
+    t[0] = Primitivos(TIPO.CADENA,str(t[1]), t.lineno(1), find_column(input, t.slice[1]))
 
+def p_exprecion_character(t):
+    '''expresion : CHARACTER'''
+    t[0] = Primitivos(TIPO.CHARACTER, str(t[1]), t.lineno(1), find_column(input, t.slice[1]))
 def p_expresion_true(t):
     '''expresion : RTRUE'''
     t[0] = Primitivos(TIPO.BOOLEANO, True, t.lineno(1), find_column(input, t.slice[1]))
@@ -458,6 +478,10 @@ def p_expresion_true(t):
 def p_expresion_false(t):
     '''expresion : RFALSE'''
     t[0] = Primitivos(TIPO.BOOLEANO, False, t.lineno(1), find_column(input, t.slice[1]))
+def p_expresion_null(t):
+    '''expresion : RNULL'''
+    t[0] = Primitivos(TIPO.NULO, None, t.lineno(1), find_column(input, t.slice[1]))
+
 
 import ply.yacc as yacc
 parser = yacc.yacc()
