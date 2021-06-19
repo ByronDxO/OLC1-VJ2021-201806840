@@ -23,6 +23,7 @@ reservadas = {
     'main'      : 'RMAIN',
     'func'      : 'RFUNC',
     'return'    : 'RRETURN',
+
 }
 
 tokens  = [
@@ -39,13 +40,22 @@ tokens  = [
     'MAYORQUE',
     'IGUALIGUAL',
     'IGUAL',
+    'DIFERENTE',
     'AND',
     'OR',
     'NOT',
     'DECIMAL',
     'ENTERO',
     'CADENA',
-    'ID'
+    'ID',
+    'MENORIGUAL',
+    'MAYORIGUAL',
+    'POT',
+    'DIV',
+    'MOD',
+    'INCREMENTO',
+    'DECREMENTO',
+
 ] + list(reservadas.values())
 
 # Tokens
@@ -65,7 +75,14 @@ t_IGUAL         = r'='
 t_AND           = r'&&'
 t_OR            = r'\|\|'
 t_NOT           = r'!'
-
+t_DIFERENTE     = r'!='
+t_MENORIGUAL    = r'<='
+t_MAYORIGUAL    = r'>='
+t_POT           = r'\*\*'
+t_DIV           = r'\/'
+t_MOD           = r'\%'
+t_INCREMENTO    = r'\+\+'
+t_DECREMENTO    = r'--'
 def t_DECIMAL(t):
     r'\d+\.\d+'
     try:
@@ -92,6 +109,12 @@ def t_ID(t):
 def t_CADENA(t):
     r'(\".*?\")'
     t.value = t.value[1:-1] # remuevo las comillas
+    t.value = t.value.replace('\\n', '\n')
+    t.value = t.value.replace('\\r', '\r')
+    t.value = t.value.replace('\\\\', '\\')
+    t.value = t.value.replace('\\"', '\"')
+    t.value = t.value.replace('\\t', '\t')
+    t.value = t.value.replace("\\'", '\'')
     return t
 
 # Comentario simple // ...
@@ -126,9 +149,10 @@ precedence = (
     ('left','OR'),
     ('left','AND'),
     ('right','UNOT'),
-    ('left','MENORQUE','MAYORQUE', 'IGUALIGUAL'),
+    ('left','MENORQUE','MAYORQUE','IGUALIGUAL','DIFERENTE','MENORIGUAL','MAYORIGUAL'),
     ('left','MAS','MENOS'),
-    ('left','POR'),
+    ('left','POR','DIV','MOD'),
+    ('left','POT'),
     ('right','UMENOS'),
     )
 
@@ -321,6 +345,8 @@ def p_tipo(t) :
         t[0] = TIPO.CADENA
     elif t[1].lower() == 'boolean':
         t[0] = TIPO.BOOLEANO
+    elif t[1].lower() == 'char':
+        t[0] = TIPO.CHARACTER
 
 #///////////////////////////////////////EXPRESION//////////////////////////////////////////////////
 
@@ -329,9 +355,15 @@ def p_expresion_binaria(t):
     expresion : expresion MAS expresion
             | expresion MENOS expresion
             | expresion POR expresion
+            | expresion DIV expresion
+            | expresion MOD expresion
+            | expresion POT expresion
             | expresion MENORQUE expresion
             | expresion MAYORQUE expresion
             | expresion IGUALIGUAL expresion
+            | expresion DIFERENTE expresion
+            | expresion MENORIGUAL expresion
+            | expresion MAYORIGUAL expresion
             | expresion AND expresion
             | expresion OR expresion
     '''
@@ -341,12 +373,24 @@ def p_expresion_binaria(t):
         t[0] = Aritmetica(OperadorAritmetico.MENOS, t[1],t[3], t.lineno(2), find_column(input, t.slice[2]))
     elif t[2] == '*':
         t[0] = Aritmetica(OperadorAritmetico.POR, t[1],t[3], t.lineno(2), find_column(input, t.slice[2]))
+    elif t[2] == '/':
+        t[0] = Aritmetica(OperadorAritmetico.DIV, t[1],t[3], t.lineno(2), find_column(input, t.slice[2]))
+    elif t[2] == '%':
+        t[0] = Aritmetica(OperadorAritmetico.MOD, t[1],t[3], t.lineno(2), find_column(input, t.slice[2]))
+    elif t[2] == '**':
+        t[0] = Aritmetica(OperadorAritmetico.POT, t[1],t[3], t.lineno(2), find_column(input, t.slice[2]))
     elif t[2] == '<':
         t[0] = Relacional(OperadorRelacional.MENORQUE, t[1],t[3], t.lineno(2), find_column(input, t.slice[2]))
     elif t[2] == '>':
         t[0] = Relacional(OperadorRelacional.MAYORQUE, t[1],t[3], t.lineno(2), find_column(input, t.slice[2]))
     elif t[2] == '==':
         t[0] = Relacional(OperadorRelacional.IGUALIGUAL, t[1],t[3], t.lineno(2), find_column(input, t.slice[2]))
+    elif t[2] == '!=':
+        t[0] = Relacional(OperadorRelacional.DIFERENTE, t[1],t[3], t.lineno(2), find_column(input, t.slice[2]))
+    elif t[2] == '<=':
+        t[0] = Relacional(OperadorRelacional.MENORIGUAL, t[1], t[3], t.lineno(2), find_column(input, t.slice[2]))
+    elif t[2] == '>=':
+        t[0] = Relacional(OperadorRelacional.MAYORIGUAL, t[1], t[3], t.lineno(2), find_column(input, t.slice[2]))
     elif t[2] == '&&':
         t[0] = Logica(OperadorLogico.AND, t[1],t[3], t.lineno(2), find_column(input, t.slice[2]))
     elif t[2] == '||':

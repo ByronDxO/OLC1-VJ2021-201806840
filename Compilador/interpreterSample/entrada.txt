@@ -31,12 +31,16 @@ main(){
     print(cad2);
     print(true || false)
     print(false)
-    int bandera = 100;
+    int bandera = 100**2;
+    print(bandera+"ahuevo que si");
+    if(8 <= 8){
+        print("si sale asdasdasdasd");
+    }
     if((5+5)<(2+1)){
         print("Entra al if");
     }
-    else if(bandera + 50 > 300){
-        print("Entro al else if xd")
+    else if(bandera + 50 != 300){
+        print("si sale perro")
     }
     else if(false){
         print("Entro al else if xddddd")
@@ -103,7 +107,7 @@ func factorial(int num){
     }
     else{
         return num * factorial(num-1)
-    }   
+    }
 }
 
 func par(int nump) {
