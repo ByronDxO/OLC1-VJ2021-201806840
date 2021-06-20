@@ -6,7 +6,9 @@ ciclo while, asi como la sentencia if y else
 *#
 main(){
 
-
+    var asd = 10.1 ;
+    asd++;
+    print(asd);
 	var cadenaFigura = "";
 	var i;
 	var n = 10;
