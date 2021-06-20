@@ -1,7 +1,7 @@
 
 
 from TS.Excepcion import Excepcion
-
+from TS.Tipo import *
 
 class TablaSimbolos:
     def __init__(self, anterior = None):
@@ -27,8 +27,8 @@ class TablaSimbolos:
     def actualizarTabla(self, simbolo):
         tablaActual = self
         while tablaActual != None:
-            if simbolo.id.lower() in tablaActual.tabla :
-                if tablaActual.tabla[simbolo.id.lower()].getTipo() == simbolo.getTipo():
+            if simbolo.id.lower() in tablaActual.tabla:
+                if tablaActual.tabla[simbolo.id.lower()].getTipo() == simbolo.getTipo() or tablaActual.tabla[simbolo.id].getTipo() is TIPO.NULO or simbolo.getTipo() is TIPO.NULO:
                     tablaActual.tabla[simbolo.id.lower()].setValor(simbolo.getValor())
                     tablaActual.tabla[simbolo.id.lower()].setTipo(simbolo.getTipo())
                     return None             #VARIABLE ACTUALIZADA

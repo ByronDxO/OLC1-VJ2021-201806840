@@ -220,7 +220,7 @@ def p_instrucciones_instruccion(t) :
 
 def p_instruccion(t) :
     '''instruccion      : imprimir_instr finins
-                        | declaracion_instr finins
+                        | declaracion_instr
                         | asignacion_instr finins
                         | incre_decre_ins finins
                         | if_instr
@@ -259,10 +259,19 @@ def p_imprimir(t) :
     t[0] = Imprimir(t[3], t.lineno(1), find_column(input, t.slice[1]))
 
 #///////////////////////////////////////DECLARACION//////////////////////////////////////////////////
-
+#declaracion para nones
 def p_declaracion(t) :
-    'declaracion_instr     : tipo ID IGUAL expresion'
+    ''' declaracion_instr : declaracion_none
+                        | declaracion_entr finins'''
+    t[0] = t[1]
+def p_declaracion_none(t):
+    '''declaracion_none  : tipo ID finins '''
+    t[0] = Declaracion(t[1], t[2], t.lineno(2), find_column(input, t.slice[2]))
+
+def p_declaracion_entr(t) :
+    'declaracion_entr     : tipo ID IGUAL expresion'
     t[0] = Declaracion(t[1], t[2], t.lineno(2), find_column(input, t.slice[2]), t[4])
+
 
 #///////////////////////////////////////ASIGNACION//////////////////////////////////////////////////
 

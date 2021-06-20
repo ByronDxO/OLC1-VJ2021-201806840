@@ -8,7 +8,7 @@ main(){
 
 
 	var cadenaFigura = "";
-	var i= 8;
+	var i;
 	var n = 10;
 
 	i=-3*n/2;
