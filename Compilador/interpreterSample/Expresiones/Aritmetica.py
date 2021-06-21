@@ -181,22 +181,36 @@ class Aritmetica(Instruccion):
         elif self.operador == OperadorAritmetico.DIV:
 
             if self.OperacionIzq.tipo == TIPO.ENTERO and self.OperacionDer.tipo == TIPO.ENTERO:  # int / int     = double
-                self.tipo = TIPO.DECIMAL
-                return round(
-                    (self.obtenerVal(self.OperacionIzq.tipo, izq) / self.obtenerVal(self.OperacionDer.tipo, der)), 2)
+                if self.obtenerVal(self.OperacionDer, der) == 0:
+                    return Excepcion("semantico", ">operacion invalida no se puede operar entre 0<", self.fila,
+                                     self.columna)
+                else:
+                    self.tipo = TIPO.DECIMAL
+                    return round((self.obtenerVal(self.OperacionIzq.tipo, izq) / self.obtenerVal(self.OperacionDer.tipo, der)), 2)
             elif self.OperacionIzq.tipo == TIPO.ENTERO and self.OperacionDer.tipo == TIPO.DECIMAL:  # int / double  = double
-                self.tipo = TIPO.DECIMAL
-                return round(
-                    (self.obtenerVal(self.OperacionIzq.tipo, izq) / self.obtenerVal(self.OperacionDer.tipo, der)), 2)
+                if self.obtenerVal(self.OperacionDer, der) == 0:
+                    return Excepcion("semantico", ">operacion invalida no se puede operar entre 0<", self.fila,
+                                     self.columna)
+                else:
+                    self.tipo = TIPO.DECIMAL
+                    return round(
+                        (self.obtenerVal(self.OperacionIzq.tipo, izq) / self.obtenerVal(self.OperacionDer.tipo, der)), 2)
             # DOUBLE
             elif self.OperacionIzq.tipo == TIPO.DECIMAL and self.OperacionDer.tipo == TIPO.ENTERO:  # doube / int   = double
-                self.tipo = TIPO.DECIMAL
-                return round(
-                    (self.obtenerVal(self.OperacionIzq.tipo, izq) / self.obtenerVal(self.OperacionDer.tipo, der)), 2)
+                if self.obtenerVal(self.OperacionDer, der) == 0:
+                    return Excepcion("semantico", ">operacion invalida no se puede operar entre 0<", self.fila,
+                                     self.columna)
+                else:
+                    self.tipo = TIPO.DECIMAL
+                    return round((self.obtenerVal(self.OperacionIzq.tipo, izq) / self.obtenerVal(self.OperacionDer.tipo, der)), 2)
             elif self.OperacionIzq.tipo == TIPO.DECIMAL and self.OperacionDer.tipo == TIPO.DECIMAL:  # double / double  = double
-                self.tipo = TIPO.DECIMAL
-                return round(
-                    (self.obtenerVal(self.OperacionIzq.tipo, izq) / self.obtenerVal(self.OperacionDer.tipo, der)), 2)
+                if self.obtenerVal(self.OperacionDer, der) == 0:
+                    return Excepcion("semantico", ">operacion invalida no se puede operar entre 0<", self.fila,
+                                     self.columna)
+                else:
+                    self.tipo = TIPO.DECIMAL
+                    return round(
+                        (self.obtenerVal(self.OperacionIzq.tipo, izq) / self.obtenerVal(self.OperacionDer.tipo, der)), 2)
 
             return Exception("Semantico", "Tipo Erroneo de operacion para /.", self.fila, self.columna)
 
@@ -222,18 +236,33 @@ class Aritmetica(Instruccion):
         elif self.operador == OperadorAritmetico.MOD:
 
             if self.OperacionIzq.tipo == TIPO.ENTERO and self.OperacionDer.tipo == TIPO.ENTERO:  # int % int     = double
-                self.tipo = TIPO.DECIMAL
-                return self.obtenerVal(self.OperacionIzq.tipo, izq) % self.obtenerVal(self.OperacionDer.tipo, der)
+                if self.obtenerVal(self.OperacionDer, der)== 0:
+                        return Excepcion("semantico", ">operacion invalida no se puede operar entre 0<",self.fila,self.columna)
+                else:
+                    self.tipo = TIPO.DECIMAL
+                    return self.obtenerVal(self.OperacionIzq.tipo, izq) % self.obtenerVal(self.OperacionDer.tipo, der)
             elif self.OperacionIzq.tipo == TIPO.ENTERO and self.OperacionDer.tipo == TIPO.DECIMAL:  # int % double  = double
-                self.tipo = TIPO.DECIMAL
-                return self.obtenerVal(self.OperacionIzq.tipo, izq) % self.obtenerVal(self.OperacionDer.tipo, der)
+                if self.obtenerVal(self.OperacionDer, der) == 0:
+                    return Excepcion("semantico", ">operacion invalida no se puede operar entre 0<", self.fila,
+                                     self.columna)
+                else:
+                    self.tipo = TIPO.DECIMAL
+                    return self.obtenerVal(self.OperacionIzq.tipo, izq) % self.obtenerVal(self.OperacionDer.tipo, der)
             # DOUBLE
             elif self.OperacionIzq.tipo == TIPO.DECIMAL and self.OperacionDer.tipo == TIPO.ENTERO:  # doube % int   = double
-                self.tipo = TIPO.DECIMAL
-                return self.obtenerVal(self.OperacionIzq.tipo, izq) % self.obtenerVal(self.OperacionDer.tipo, der)
+                if self.obtenerVal(self.OperacionDer, der) == 0:
+                    return Excepcion("semantico", ">operacion invalida no se puede operar entre 0<", self.fila,
+                                     self.columna)
+                else:
+                    self.tipo = TIPO.DECIMAL
+                    return self.obtenerVal(self.OperacionIzq.tipo, izq) % self.obtenerVal(self.OperacionDer.tipo, der)
             elif self.OperacionIzq.tipo == TIPO.DECIMAL and self.OperacionDer.tipo == TIPO.DECIMAL:  # double % double  = double
-                self.tipo = TIPO.DECIMAL
-                return self.obtenerVal(self.OperacionIzq.tipo, izq) % self.obtenerVal(self.OperacionDer.tipo, der)
+                if self.obtenerVal(self.OperacionDer, der) == 0:
+                    return Excepcion("semantico", ">operacion invalida no se puede operar entre 0<", self.fila,
+                                     self.columna)
+                else:
+                    self.tipo = TIPO.DECIMAL
+                    return self.obtenerVal(self.OperacionIzq.tipo, izq) % self.obtenerVal(self.OperacionDer.tipo, der)
 
             return Exception("Semantico", "Tipo Erroneo de operacion para %.", self.fila, self.columna)
 

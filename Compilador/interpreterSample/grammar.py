@@ -15,6 +15,7 @@ reservadas = {
     'boolean'   : 'RBOOLEAN',
     'var'       : 'RVAR',
     'print'     : 'RPRINT',
+    'for'       :  'RFOR',
     'if'        : 'RIF',
     'else'      : 'RELSE',
     'while'     : 'RWHILE',
@@ -174,6 +175,7 @@ precedence = (
     ('left','POR','DIV','MOD'),
     ('left','POT'),
     ('right','UMENOS'),
+    ('left','INCREMENTO','DECREMENTO')
     )
 
 # Definición de la gramática
@@ -196,6 +198,7 @@ from Instrucciones.Main import Main
 from Instrucciones.Funcion import Funcion
 from Instrucciones.Llamada import Llamada
 from Instrucciones.Return import Return
+from Instrucciones.For import  For
 from Instrucciones.Decremento_incremento import Decremento_incremento
 def p_init(t) :
     'init            : instrucciones'
@@ -224,6 +227,7 @@ def p_instruccion(t) :
                         | asignacion_instr finins
                         | incre_decre_ins finins
                         | if_instr
+                        | for_instr
                         | while_instr
                         | break_instr finins
                         | main_instr
@@ -293,6 +297,9 @@ def p_if3(t) :
     'if_instr     : RIF PARA expresion PARC LLAVEA instrucciones LLAVEC RELSE if_instr'
     t[0] = If(t[3], t[6], None, t[9], t.lineno(1), find_column(input, t.slice[1]))
 
+#///////////////////////////////////////FOR//////////////////////////////////////////////////
+def p_for(t):
+    'for_instr : RFOR PARA expresion PARC LLAVEA instrucciones LLAVEC'
 #///////////////////////////////////////WHILE//////////////////////////////////////////////////
 
 def p_while(t) :
@@ -513,59 +520,60 @@ def parse(inp) :
 
 #INTERFAZ
 
-f = open("./entrada.txt", "r")
-entrada = f.read()
+def interprete_perron(cadena):
 
-from TS.Arbol import Arbol
-from TS.TablaSimbolos import TablaSimbolos
+    entrada = cadena
 
-instrucciones = parse(entrada) # ARBOL AST
-ast = Arbol(instrucciones)
-TSGlobal = TablaSimbolos()
-ast.setTSglobal(TSGlobal)
-for error in errores:                   # CAPTURA DE ERRORES LEXICOS Y SINTACTICOS
-    ast.getExcepciones().append(error)
-    ast.updateConsola(error.toString())
+    from TS.Arbol import Arbol
+    from TS.TablaSimbolos import TablaSimbolos
 
-for instruccion in ast.getInstrucciones():      # 1ERA PASADA (DECLARACIONES Y ASIGNACIONES)
-    if isinstance(instruccion, Funcion):
-        ast.addFuncion(instruccion)     # GUARDAR LA FUNCION EN "MEMORIA" (EN EL ARBOL)
-    if isinstance(instruccion, Declaracion) or isinstance(instruccion, Asignacion):
-        value = instruccion.interpretar(ast,TSGlobal)
-        if isinstance(value, Excepcion) :
-            ast.getExcepciones().append(value)
-            ast.updateConsola(value.toString())
-        if isinstance(value, Break): 
-            err = Excepcion("Semantico", "Sentencia BREAK fuera de ciclo", instruccion.fila, instruccion.columna)
+    instrucciones = parse(entrada) # ARBOL AST
+    ast = Arbol(instrucciones)
+    TSGlobal = TablaSimbolos()
+    ast.setTSglobal(TSGlobal)
+    for error in errores:                   # CAPTURA DE ERRORES LEXICOS Y SINTACTICOS
+        ast.getExcepciones().append(error)
+        ast.updateConsola(error.toString())
+
+    for instruccion in ast.getInstrucciones():      # 1ERA PASADA (DECLARACIONES Y ASIGNACIONES)
+        if isinstance(instruccion, Funcion):
+            ast.addFuncion(instruccion)     # GUARDAR LA FUNCION EN "MEMORIA" (EN EL ARBOL)
+        if isinstance(instruccion, Declaracion) or isinstance(instruccion, Asignacion):
+            value = instruccion.interpretar(ast,TSGlobal)
+            if isinstance(value, Excepcion) :
+                ast.getExcepciones().append(value)
+                ast.updateConsola(value.toString())
+            if isinstance(value, Break):
+                err = Excepcion("Semantico", "Sentencia BREAK fuera de ciclo", instruccion.fila, instruccion.columna)
+                ast.getExcepciones().append(err)
+                ast.updateConsola(err.toString())
+
+    for instruccion in ast.getInstrucciones():      # 2DA PASADA (MAIN)
+        contador = 0
+        if isinstance(instruccion, Main):
+            contador += 1
+            if contador == 2: # VERIFICAR LA DUPLICIDAD
+                err = Excepcion("Semantico", "Existen 2 funciones Main", instruccion.fila, instruccion.columna)
+                ast.getExcepciones().append(err)
+                ast.updateConsola(err.toString())
+                break
+            value = instruccion.interpretar(ast,TSGlobal)
+            if isinstance(value, Excepcion) :
+                ast.getExcepciones().append(value)
+                ast.updateConsola(value.toString())
+            if isinstance(value, Break):
+                err = Excepcion("Semantico", "Sentencia BREAK fuera de ciclo", instruccion.fila, instruccion.columna)
+                ast.getExcepciones().append(err)
+                ast.updateConsola(err.toString())
+            if isinstance(value, Return):
+                err = Excepcion("Semantico", "Sentencia RETURN fuera de ciclo", instruccion.fila, instruccion.columna)
+                ast.getExcepciones().append(err)
+                ast.updateConsola(err.toString())
+
+    for instruccion in ast.getInstrucciones():    # 3ERA PASADA (SENTENCIAS FUERA DE MAIN)
+        if not (isinstance(instruccion, Main) or isinstance(instruccion, Declaracion) or isinstance(instruccion, Asignacion) or isinstance(instruccion, Funcion)):
+            err = Excepcion("Semantico", "Sentencias fuera de Main", instruccion.fila, instruccion.columna)
             ast.getExcepciones().append(err)
             ast.updateConsola(err.toString())
-        
-for instruccion in ast.getInstrucciones():      # 2DA PASADA (MAIN)
-    contador = 0
-    if isinstance(instruccion, Main):
-        contador += 1
-        if contador == 2: # VERIFICAR LA DUPLICIDAD
-            err = Excepcion("Semantico", "Existen 2 funciones Main", instruccion.fila, instruccion.columna)
-            ast.getExcepciones().append(err)
-            ast.updateConsola(err.toString())
-            break
-        value = instruccion.interpretar(ast,TSGlobal)
-        if isinstance(value, Excepcion) :
-            ast.getExcepciones().append(value)
-            ast.updateConsola(value.toString())
-        if isinstance(value, Break): 
-            err = Excepcion("Semantico", "Sentencia BREAK fuera de ciclo", instruccion.fila, instruccion.columna)
-            ast.getExcepciones().append(err)
-            ast.updateConsola(err.toString())
-        if isinstance(value, Return): 
-            err = Excepcion("Semantico", "Sentencia RETURN fuera de ciclo", instruccion.fila, instruccion.columna)
-            ast.getExcepciones().append(err)
-            ast.updateConsola(err.toString())
+    return ast
 
-for instruccion in ast.getInstrucciones():    # 3ERA PASADA (SENTENCIAS FUERA DE MAIN)
-    if not (isinstance(instruccion, Main) or isinstance(instruccion, Declaracion) or isinstance(instruccion, Asignacion) or isinstance(instruccion, Funcion)):
-        err = Excepcion("Semantico", "Sentencias fuera de Main", instruccion.fila, instruccion.columna)
-        ast.getExcepciones().append(err)
-        ast.updateConsola(err.toString())
-
-print(ast.getConsola())
