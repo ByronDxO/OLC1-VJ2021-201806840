@@ -298,8 +298,21 @@ def p_if3(t) :
     t[0] = If(t[3], t[6], None, t[9], t.lineno(1), find_column(input, t.slice[1]))
 
 #///////////////////////////////////////FOR//////////////////////////////////////////////////
+def p_declarar_asignar_for(t):
+    '''declarar_asignar_for :   declaracion_instr
+                            |   asignacion_instr
+
+    '''
+    t[0] = t[1]
+def p_actualizacion_for(t):
+    '''actualizacion_for    : asignacion_instr
+                            | incre_decre_ins
+
+    '''
+    t[0] = t[1]
 def p_for(t):
-    'for_instr : RFOR PARA expresion PARC LLAVEA instrucciones LLAVEC'
+    'for_instr : RFOR PARA  declarar_asignar_for PUNTOCOMA expresion PUNTOCOMA actualizacion_for PARC LLAVEA  instrucciones LLAVEC'
+    t[0] = For(t[3],t[5],t[7],t[10],t.lineno(1),find_column(input,t.slice[1]))
 #///////////////////////////////////////WHILE//////////////////////////////////////////////////
 
 def p_while(t) :
