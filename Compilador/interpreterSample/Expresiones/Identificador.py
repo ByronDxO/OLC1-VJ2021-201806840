@@ -1,6 +1,6 @@
 from TS.Excepcion import Excepcion
 from Abstract.Instruccion import Instruccion
-
+from Abstract.NodoArbol import  NodoArbol
 
 class Identificador(Instruccion):
     def __init__(self, identificador, fila, columna):
@@ -18,3 +18,8 @@ class Identificador(Instruccion):
         self.tipo = simbolo.getTipo()
         
         return simbolo.getValor()
+
+    def getNodo(self):
+        nodo = NodoArbol("IDENTIFICADOR")
+        nodo.addHijo(str(self.identificador))
+        return nodo

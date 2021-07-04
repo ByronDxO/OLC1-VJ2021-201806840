@@ -1,7 +1,7 @@
 from Abstract.Instruccion import Instruccion
 from TS.Excepcion import Excepcion
 from TS.Tipo import TIPO, OperadorRelacional
-
+from Abstract.NodoArbol import NodoArbol
 class Relacional(Instruccion):
     def __init__(self, operador, OperacionIzq, OperacionDer, fila, columna):
         self.operador = operador
@@ -161,4 +161,10 @@ class Relacional(Instruccion):
         elif tipo == TIPO.BOOLEANO:
             return bool(val)
         return str(val)
-        
+
+    def getNodo(self):
+        nodo = NodoArbol("RELACIONAL")
+        nodo.addHijoNode(self.OperacionIzq.getNodo())
+        nodo.addHijo(str(self.operador))
+        nodo.addHijoNode(self.OperacionDer.getNodo())
+        return nodo

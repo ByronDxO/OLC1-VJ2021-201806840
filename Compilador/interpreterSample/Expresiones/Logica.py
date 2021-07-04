@@ -1,7 +1,7 @@
 from Abstract.Instruccion import Instruccion
 from TS.Excepcion import Excepcion
 from TS.Tipo import TIPO, OperadorLogico
-
+from Abstract.NodoArbol import NodoArbol
 class Logica(Instruccion):
     def __init__(self, operador, OperacionIzq, OperacionDer, fila, columna):
         self.operador = operador
@@ -41,4 +41,14 @@ class Logica(Instruccion):
         elif tipo == TIPO.BOOLEANO:
             return bool(val)
         return str(val)
-        
+
+    def getNodo(self):
+        nodo = NodoArbol("LOGICA")
+        if self.OperacionDer != None:
+            nodo.addHijoNode(self.OperacionIzq.getNodo())
+            nodo.addHijo(str(self.operador))
+            nodo.addHijoNode(self.OperacionDer.getNodo())
+        else:
+            nodo.addHijo(str(self.operador))
+            nodo.addHijoNode(self.OperacionIzq.getNodo())
+        return nodo

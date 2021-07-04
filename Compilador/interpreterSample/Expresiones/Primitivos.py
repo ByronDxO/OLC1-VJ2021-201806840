@@ -1,4 +1,5 @@
 from Abstract.Instruccion import Instruccion
+from Abstract.NodoArbol import NodoArbol
 
 class Primitivos(Instruccion):
     def __init__(self, tipo, valor, fila, columna):
@@ -9,3 +10,8 @@ class Primitivos(Instruccion):
 
     def interpretar(self, tree, table):
         return self.valor
+
+    def getNodo(self):
+        nodo = NodoArbol("PRIMITIVO")
+        nodo.addHijo(str(self.valor))
+        return nodo

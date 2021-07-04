@@ -4,7 +4,8 @@ from TS.Excepcion import Excepcion
 from TS.Tipo import TIPO
 from TS.TablaSimbolos import TablaSimbolos
 from Instrucciones.Break import Break
-
+from Instrucciones.Continue import Continue
+from Abstract.NodoArbol import  NodoArbol
 
 class If(Instruccion):
     def __init__(self, condicion, instruccionesIf, instruccionesElse, ElseIf, fila, columna):
@@ -29,6 +30,7 @@ class If(Instruccion):
                         tree.updateConsola(result.toString())
                     if isinstance(result, Break): return result
                     if isinstance(result, Return): return result
+                    if isinstance(result, Continue): return result
             else:               #ELSE
                 if self.instruccionesElse != None:
                     nuevaTabla = TablaSimbolos(table)       #NUEVO ENTORNO
@@ -39,11 +41,30 @@ class If(Instruccion):
                             tree.updateConsola(result.toString()) 
                         if isinstance(result, Break): return result
                         if isinstance(result, Return): return result
+                        if isinstance(result, Continue): return result
                 elif self.elseIf != None:
                     result = self.elseIf.interpretar(tree, table)
                     if isinstance(result, Excepcion): return result
                     if isinstance(result, Break): return result
                     if isinstance(result, Return): return result
+                    if isinstance(result, Continue): return result
 
         else:
             return Excepcion("Semantico", "Tipo de dato no booleano en IF.", self.fila, self.columna)
+    def getNodo(self):
+        nodo = NodoArbol("IF")
+        nodo.addHijoNode(self.condicion.getNodo())
+        instruccionesIf = NodoArbol("INSTRUCCIONES IF")
+        for instr in self.instruccionesIf:
+            instruccionesIf.addHijoNode(instr.getNodo())
+        nodo.addHijoNode(instruccionesIf)
+
+        if self.instruccionesElse != None:
+            instruccionesElse = NodoArbol("INSTRUCCIONES ELSE")
+            for instr in self.instruccionesElse:
+                instruccionesElse.addHijoNode(instr.getNodo())
+            nodo.addHijoNode(instruccionesElse)
+        elif self.elseIf != None:
+            nodo.addHijoNode(self.elseIf.getNodo())
+
+        return nodo

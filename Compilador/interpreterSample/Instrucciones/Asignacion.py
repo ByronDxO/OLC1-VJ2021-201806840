@@ -1,7 +1,7 @@
 from TS.Excepcion import Excepcion
 from Abstract.Instruccion import Instruccion
 from TS.Simbolo import Simbolo
-
+from Abstract.NodoArbol import  NodoArbol
 
 class Asignacion(Instruccion):
     def __init__(self, identificador, expresion, fila, columna):
@@ -20,4 +20,10 @@ class Asignacion(Instruccion):
 
         if isinstance(result, Excepcion): return result
         return None
+    def getNodo(self):
+        nodo = NodoArbol("ASIGNACION")
+        nodo.addHijo(str(self.expresion.tipo))
+        nodo.addHijo(str(self.identificador))
+        nodo.addHijoNode(self.expresion.getNodo())
+        return nodo
 

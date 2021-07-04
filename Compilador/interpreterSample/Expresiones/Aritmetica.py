@@ -2,7 +2,7 @@ from re import A
 from Abstract.Instruccion import Instruccion
 from TS.Excepcion import Excepcion
 from TS.Tipo import TIPO, OperadorAritmetico
-
+from Abstract.NodoArbol import NodoArbol
 class Aritmetica(Instruccion):
     def __init__(self, operador, OperacionIzq, OperacionDer, fila, columna):
         self.operador = operador
@@ -275,6 +275,17 @@ class Aritmetica(Instruccion):
                 return - self.obtenerVal(self.OperacionIzq.tipo, izq)
             return Excepcion("Semantico", "Tipo Erroneo de operacion para - unario.", self.fila, self.columna)
         return Excepcion("Semantico", "Tipo de Operacion no Especificado.", self.fila, self.columna)
+
+    def getNodo(self):
+        nodo = NodoArbol("ARITMETICA")
+        if self.OperacionDer != None:
+            nodo.addHijoNode(self.OperacionIzq.getNodo())
+            nodo.addHijo(str(self.operador))
+            nodo.addHijoNode(self.OperacionDer.getNodo())
+        else:
+            nodo.addHijo(str(self.operador))
+            nodo.addHijoNode(self.OperacionIzq.getNodo())
+        return nodo
 
     def obtenerVal(self, tipo, val):
         if tipo == TIPO.ENTERO:

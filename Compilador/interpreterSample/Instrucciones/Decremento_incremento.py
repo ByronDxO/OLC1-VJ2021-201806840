@@ -4,7 +4,7 @@ from TS.Tipo import OperadorAritmetico,TIPO
 from TS.TablaSimbolos import TablaSimbolos
 from TS.Simbolo import Simbolo
 from Expresiones.Identificador import Identificador
-
+from Abstract.NodoArbol import  NodoArbol
 class Decremento_incremento(Instruccion):
     def __init__(self,identificador,tipo,fila,columna):
         self.identificador = identificador
@@ -29,3 +29,9 @@ class Decremento_incremento(Instruccion):
         result = table.actualizarTabla(new_symbol)
         if isinstance(result, Exception): return result
         return None
+
+    def getNodo(self):
+        nodo = NodoArbol("ASIGNACION")
+        nodo.addHijo(str(self.tipo))
+        nodo.addHijo(str(self.identificador))
+        return nodo
