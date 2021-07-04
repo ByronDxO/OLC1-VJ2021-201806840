@@ -30,3 +30,4 @@ class Simbolo:
     
     def getColumna(self):
         return self.columna
+

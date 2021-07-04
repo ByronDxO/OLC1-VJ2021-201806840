@@ -200,6 +200,11 @@ from Instrucciones.Llamada import Llamada
 from Instrucciones.Return import Return
 from Instrucciones.For import  For
 from Instrucciones.Decremento_incremento import Decremento_incremento
+from Instrucciones.Case import  Case
+from Instrucciones.Default import  Default
+from Instrucciones.Switch import Switch
+from Instrucciones.Continue import Continue
+
 def p_init(t) :
     'init            : instrucciones'
     t[0] = t[1]
@@ -229,6 +234,7 @@ def p_instruccion(t) :
                         | if_instr
                         | for_instr
                         | while_instr
+                        | switch_instr
                         | break_instr finins
                         | main_instr
                         | funcion_instr
@@ -283,6 +289,41 @@ def p_asignacion(t) :
     'asignacion_instr     : ID IGUAL expresion'
     t[0] = Asignacion(t[1], t[3], t.lineno(1), find_column(input, t.slice[1]))
 
+#///////////////////////////////////////SWITCH//////////////////////////////////////////////////
+def p_condicion_switch_case_list_default(t): # Aqui verifiac que la condicion venga  [<CASES_LIST>] [<DEFAULT>]
+    'switch_instr   : RSWITCH PARA expresion PARC LLAVEA case_switch_ins default_switch LLAVEC'
+    t[0] = Switch(t[3], t[6], t[7] ,t.lineno(1), find_column(input, t.slice[1]))
+
+def p_condicion_switch_case_list(t): # Aqui verifiac que la condicion venga  [<CASES_LIST>]
+    'switch_instr   : RSWITCH PARA expresion PARC LLAVEA case_switch_ins LLAVEC'
+    t[0] = Switch(t[3], t[6], None, t.lineno(1), find_column(input, t.slice[1]))
+
+def p_condicion_switch_default(t): # Aqui verifiac que la condicion venga   [<DEFAULT>]
+    'switch_instr   : RSWITCH PARA expresion PARC LLAVEA default_switch LLAVEC'
+    t[0] = Switch(t[3], None, t[6], t.lineno(1), find_column(input, t.slice[1]))
+
+def p_casos_switch_ins_caso_switch(t): # Aqui hace a que sea recursivo y puedan venir infinitos [<CASES_LIST>]
+    'case_switch_instr : case_switch_ins case_switch'
+    if t[2] != "":
+        t[1].append(t[2])
+    t[0] = t[1]
+
+def p_caso_switch_(t):
+    'case_switch_ins : case_switch'
+    if t[1] == "":
+        t[0] = []
+    else:
+        t[0] = [t[1]]
+
+def p_condicion_switch_case(t):
+    'case_switch  : RCASE expresion DOSPUNTOS instrucciones'
+    t[0] = Case(t[2], t[4], t.lineno(1), find_column(input, t.slice[1]))
+
+def p_condicion_default_switch(t):
+    'default_switch : RDEFAULT DOSPUNTOS instrucciones'
+    # t[0] = t[3]
+    t[0] = Default(t[3], t.lineno(1), find_column(input, t.slice[1]))
+
 #///////////////////////////////////////IF//////////////////////////////////////////////////
 
 def p_if1(t) :
@@ -324,6 +365,14 @@ def p_while(t) :
 def p_break(t) :
     'break_instr     : RBREAK'
     t[0] = Break(t.lineno(1), find_column(input, t.slice[1]))
+#///////////////////////////////////////RETURN//////////////////////////////////////////////////
+def p_return_instruccion(t):
+    'return_ins     :  RRETURN expresion'
+    t[0] = Return(t[2],t.lineno(1),find_column(input, t.slice[1]))
+#///////////////////////////////////////CONTINUE//////////////////////////////////////////////////
+def p_continue_instruccion(t):
+    'continue_ins   :   RCONTINUE'
+    t[0] = Continue(t.lineno(1),find_column(input,t.slice[1]))
 
 #///////////////////////////////////////MAIN//////////////////////////////////////////////////
 

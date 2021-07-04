@@ -35,6 +35,8 @@ class TablaSimbolos:
                 return Excepcion("Semantico", "Tipo de dato Diferente en Asignacion", simbolo.getFila(), simbolo.getColumna())
             else:
                 tablaActual = tablaActual.anterior
+                if tablaActual is None:
+                    return None
         return Excepcion("Semantico", "Variable No encontrada en Asignacion", simbolo.getFila(), simbolo.getColumna())
         
     
