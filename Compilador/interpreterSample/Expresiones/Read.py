@@ -1,4 +1,4 @@
-from Abstract import Instruccion
+from Abstract.Instruccion import Instruccion
 from TS.Tipo import TIPO
 from Abstract.NodoArbol import NodoArbol
 from tkinter import *
@@ -13,9 +13,9 @@ class Read(Instruccion):
         self.tipo = TIPO.CADENA
         self.lectura = None
 
-    def interpretar(self,tree , table):
-        print(tree.get_consola())
-        tree.showConsolaSalida(tree.get_consola())
+    def interpretar(self,tree,table ):
+        print(tree.getConsola())
+        tree.showConsolaSalida(tree.getConsola())
         self.lectura = simpledialog.askstring("Read()","Ingresa el valor ", parent = tree.getConsolaSalida())
         return self.lectura
 

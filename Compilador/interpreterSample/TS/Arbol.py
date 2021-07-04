@@ -1,3 +1,4 @@
+from tkinter import *
 class Arbol:
     def __init__(self, instrucciones ):
         self.instrucciones = instrucciones
@@ -5,7 +6,9 @@ class Arbol:
         self.excepciones = []
         self.consola = ""
         self.TSglobal = None
-
+        self.showConsolaSalida = None
+        self.dot =""
+        self.contador = 0
     def getInstrucciones(self):
         return self.instrucciones
 
@@ -44,6 +47,12 @@ class Arbol:
     
     def addFuncion(self, funcion):
         self.funciones.append(funcion)
+
+    def getConsolaSalida(self):
+        return self.consolaSalida
+    def showConsolaSalida(self, consola):
+        self.consolaSalida.delete("1.0", "end")
+        self.consolaSalida.insert(INSERT, consola)
 
     def getDot(self,raiz):
         self.dot =""

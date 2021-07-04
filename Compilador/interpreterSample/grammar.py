@@ -6,6 +6,14 @@ INTERPRETER SAMPLE
 '''
 import re
 from TS.Excepcion import Excepcion
+import os
+from Abstract.NodoArbol import NodoArbol
+from Nativas.Truncate import Truncate
+from Nativas.ToUpper import ToUpper
+from Nativas.ToLower import ToLower
+from Nativas.TypeOf import TypeOf
+from Nativas.Length import Lenght
+from Nativas.Round import Round
 
 errores = []
 reservadas = {
@@ -26,6 +34,12 @@ reservadas = {
     'func'      : 'RFUNC',
     'return'    : 'RRETURN',
     'null'      : 'RNULL',
+    'switch'   : 'RSWITCH',
+    'case'     : 'RCASE',
+    'default'  : 'RDEFAULT',
+    'continue' : 'RCONTINUE',
+    'read'     : 'RREAD',
+
 
 }
 
@@ -60,7 +74,8 @@ tokens  = [
     'DECREMENTO',
     'COMENTARIO_MULTI',
     'COMENTARIO_SIMPLE',
-    'CHARACTER'
+    'CHARACTER',
+    'DOSPUNTOS'
 
 
 
@@ -83,7 +98,7 @@ t_IGUAL         = r'='
 t_AND           = r'&&'
 t_OR            = r'\|\|'
 t_NOT           = r'!'
-t_DIFERENTE     = r'!='
+t_DIFERENTE     = r'=!'
 t_MENORIGUAL    = r'<='
 t_MAYORIGUAL    = r'>='
 t_POT           = r'\*\*'
@@ -91,6 +106,7 @@ t_DIV           = r'\/'
 t_MOD           = r'\%'
 t_INCREMENTO    = r'\+\+'
 t_DECREMENTO    = r'--'
+t_DOSPUNTOS     = r'\:'
 def t_DECIMAL(t):
     r'\d+\.\d+'
     try:
@@ -204,7 +220,8 @@ from Instrucciones.Case import  Case
 from Instrucciones.Default import  Default
 from Instrucciones.Switch import Switch
 from Instrucciones.Continue import Continue
-
+from Expresiones.Casteo import Casteo
+from Expresiones.Read import Read
 def p_init(t) :
     'init            : instrucciones'
     t[0] = t[1]
@@ -234,8 +251,9 @@ def p_instruccion(t) :
                         | if_instr
                         | for_instr
                         | while_instr
-                        | switch_instr
+                        | switch_ins
                         | break_instr finins
+                        | continue_ins finins
                         | main_instr
                         | funcion_instr
                         | llamada_instr finins
@@ -289,21 +307,35 @@ def p_asignacion(t) :
     'asignacion_instr     : ID IGUAL expresion'
     t[0] = Asignacion(t[1], t[3], t.lineno(1), find_column(input, t.slice[1]))
 
+
+#///////////////////////////////////////IF//////////////////////////////////////////////////
+
+def p_if1(t) :
+    'if_instr     : RIF PARA expresion PARC LLAVEA instrucciones LLAVEC'
+    t[0] = If(t[3], t[6], None, None, t.lineno(1), find_column(input, t.slice[1]))
+
+def p_if2(t) :
+    'if_instr     : RIF PARA expresion PARC LLAVEA instrucciones LLAVEC RELSE LLAVEA instrucciones LLAVEC'
+    t[0] = If(t[3], t[6], t[10], None, t.lineno(1), find_column(input, t.slice[1]))
+
+def p_if3(t) :
+    'if_instr     : RIF PARA expresion PARC LLAVEA instrucciones LLAVEC RELSE if_instr'
+    t[0] = If(t[3], t[6], None, t[9], t.lineno(1), find_column(input, t.slice[1]))
 #///////////////////////////////////////SWITCH//////////////////////////////////////////////////
 def p_condicion_switch_case_list_default(t): # Aqui verifiac que la condicion venga  [<CASES_LIST>] [<DEFAULT>]
-    'switch_instr   : RSWITCH PARA expresion PARC LLAVEA case_switch_ins default_switch LLAVEC'
+    'switch_ins   : RSWITCH PARA expresion PARC LLAVEA case_switch_ins default_switch LLAVEC'
     t[0] = Switch(t[3], t[6], t[7] ,t.lineno(1), find_column(input, t.slice[1]))
 
 def p_condicion_switch_case_list(t): # Aqui verifiac que la condicion venga  [<CASES_LIST>]
-    'switch_instr   : RSWITCH PARA expresion PARC LLAVEA case_switch_ins LLAVEC'
+    'switch_ins   : RSWITCH PARA expresion PARC LLAVEA case_switch_ins LLAVEC'
     t[0] = Switch(t[3], t[6], None, t.lineno(1), find_column(input, t.slice[1]))
 
 def p_condicion_switch_default(t): # Aqui verifiac que la condicion venga   [<DEFAULT>]
-    'switch_instr   : RSWITCH PARA expresion PARC LLAVEA default_switch LLAVEC'
+    'switch_ins   : RSWITCH PARA expresion PARC LLAVEA default_switch LLAVEC'
     t[0] = Switch(t[3], None, t[6], t.lineno(1), find_column(input, t.slice[1]))
 
 def p_casos_switch_ins_caso_switch(t): # Aqui hace a que sea recursivo y puedan venir infinitos [<CASES_LIST>]
-    'case_switch_instr : case_switch_ins case_switch'
+    'case_switch_ins : case_switch_ins case_switch'
     if t[2] != "":
         t[1].append(t[2])
     t[0] = t[1]
@@ -324,19 +356,6 @@ def p_condicion_default_switch(t):
     # t[0] = t[3]
     t[0] = Default(t[3], t.lineno(1), find_column(input, t.slice[1]))
 
-#///////////////////////////////////////IF//////////////////////////////////////////////////
-
-def p_if1(t) :
-    'if_instr     : RIF PARA expresion PARC LLAVEA instrucciones LLAVEC'
-    t[0] = If(t[3], t[6], None, None, t.lineno(1), find_column(input, t.slice[1]))
-
-def p_if2(t) :
-    'if_instr     : RIF PARA expresion PARC LLAVEA instrucciones LLAVEC RELSE LLAVEA instrucciones LLAVEC'
-    t[0] = If(t[3], t[6], t[10], None, t.lineno(1), find_column(input, t.slice[1]))
-
-def p_if3(t) :
-    'if_instr     : RIF PARA expresion PARC LLAVEA instrucciones LLAVEC RELSE if_instr'
-    t[0] = If(t[3], t[6], None, t[9], t.lineno(1), find_column(input, t.slice[1]))
 
 #///////////////////////////////////////FOR//////////////////////////////////////////////////
 def p_declarar_asignar_for(t):
@@ -365,10 +384,7 @@ def p_while(t) :
 def p_break(t) :
     'break_instr     : RBREAK'
     t[0] = Break(t.lineno(1), find_column(input, t.slice[1]))
-#///////////////////////////////////////RETURN//////////////////////////////////////////////////
-def p_return_instruccion(t):
-    'return_ins     :  RRETURN expresion'
-    t[0] = Return(t[2],t.lineno(1),find_column(input, t.slice[1]))
+
 #///////////////////////////////////////CONTINUE//////////////////////////////////////////////////
 def p_continue_instruccion(t):
     'continue_ins   :   RCONTINUE'
@@ -499,7 +515,7 @@ def p_expresion_binaria(t):
         t[0] = Relacional(OperadorRelacional.MAYORQUE, t[1],t[3], t.lineno(2), find_column(input, t.slice[2]))
     elif t[2] == '==':
         t[0] = Relacional(OperadorRelacional.IGUALIGUAL, t[1],t[3], t.lineno(2), find_column(input, t.slice[2]))
-    elif t[2] == '!=':
+    elif t[2] == '=!':
         t[0] = Relacional(OperadorRelacional.DIFERENTE, t[1],t[3], t.lineno(2), find_column(input, t.slice[2]))
     elif t[2] == '<=':
         t[0] = Relacional(OperadorRelacional.MENORIGUAL, t[1], t[3], t.lineno(2), find_column(input, t.slice[2]))
@@ -559,8 +575,11 @@ def p_expresion_false(t):
 def p_expresion_null(t):
     '''expresion : RNULL'''
     t[0] = Primitivos(TIPO.NULO, None, t.lineno(1), find_column(input, t.slice[1]))
-
-
+def p_expresion_casteo(t):
+    '''expresion : PARA tipo PARC expresion'''
+    t[0] = Casteo(t[2], t[4], t.lineno(1), find_column(input, t.slice[1]))
+def p_expresion_read(t):
+    t[0]=Read(t.lineno(1), find_column(input, t.slice[1]))
 import ply.yacc as yacc
 parser = yacc.yacc()
 
@@ -580,6 +599,42 @@ def parse(inp) :
     input = inp
     return parser.parse(inp)
 
+# Nativas
+def crearNativas(ast):
+    nombre = "toupper"
+    parametros =[{'tipoDato':TIPO.CADENA,'identificador':'toUpper##Param1'}]
+    instrucciones = []
+    toUpper = ToUpper(nombre, parametros,instrucciones,-1,-1)
+    ast.addFuncion(toUpper)
+    nombre = "tolower"
+    parametros = [{'tipoDato': TIPO.CADENA, 'identificador': 'toLower##Param1'}]
+    instrucciones = []
+    toLower = ToLower(nombre, parametros, instrucciones, -1, -1)
+    ast.addFuncion(toLower)  # GUARDAR LA FUNCION EN "MEMORIA" (EN EL ARBOL)
+
+    nombre = "length"
+    parametros = [{'tipoDato': TIPO.CADENA, 'identificador': 'length##Param1'}]
+    instrucciones = []
+    length = Lenght(nombre, parametros, instrucciones, -1, -1)
+    ast.addFuncion(length)  # GUARDAR LA FUNCION EN "MEMORIA" (EN EL ARBOL)
+
+    nombre = "truncate"
+    parametros = [{'tipoDato': TIPO.ENTERO, 'identificador': 'truncate##Param1'}]
+    instrucciones = []
+    truncate = Truncate(nombre, parametros, instrucciones, -1, -1)
+    ast.addFuncion(truncate)  # GUARDAR LA FUNCION EN "MEMORIA" (EN EL ARBOL)
+
+    nombre = "round"
+    parametros = [{'tipoDato': TIPO.ENTERO, 'identificador': 'round##Param1'}]
+    instrucciones = []
+    rround = Round(nombre, parametros, instrucciones, -1, -1)
+    ast.addFuncion(rround)  # GUARDAR LA FUNCION EN "MEMORIA" (EN EL ARBOL)
+
+    nombre = "typeof"
+    parametros = [{'tipoDato': TIPO.NULO, 'identificador': 'typeOf##Param1'}]
+    instrucciones = []
+    typeOf = TypeOf(nombre, parametros, instrucciones, -1, -1)
+    ast.addFuncion(typeOf)  # GUARDAR LA FUNCION EN "MEMORIA" (EN EL ARBOL)
 #INTERFAZ
 
 def interprete_perron(cadena):
@@ -637,5 +692,9 @@ def interprete_perron(cadena):
             err = Excepcion("Semantico", "Sentencias fuera de Main", instruccion.fila, instruccion.columna)
             ast.getExcepciones().append(err)
             ast.updateConsola(err.toString())
+    init = NodoArbol("RAIZ")
+    instr = NodoArbol("INSTRUCCIONES")
+
+
     return ast
 
