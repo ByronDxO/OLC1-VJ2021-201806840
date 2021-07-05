@@ -1,5 +1,6 @@
 from GUI import Ventana
-
+import sys
+sys.setrecursionlimit(3000)
 class main():
 
     def __init__(self):

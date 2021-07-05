@@ -3,7 +3,7 @@ import tkinter as tk
 from tkinter import *
 from tkinter import filedialog
 from tkinter import messagebox
-
+import webbrowser as wb
 
 class Ventana():
 
@@ -41,7 +41,7 @@ class Ventana():
 
         self.reporte = Menu(self.barra_menu)
         self.reporte.add_command(label="Reporte de Errores",command = lambda:self.reporte_error())
-        self.reporte.add_command(label="Generar Árbol AST (Árbol de Análisis Sintáctico)")
+        self.reporte.add_command(label="Generar Árbol AST (Árbol de Análisis Sintáctico)",command = lambda:self.reporte_ast())
         self.reporte.add_command(label="Reporte de Tabla de Símbolos")
 
         self.barra_menu.add_cascade(label="Reporte", menu=self.reporte)
@@ -50,7 +50,7 @@ class Ventana():
         self.ayuda = Menu(self.barra_menu)
         self.ayuda.add_command(label="opcion 1")
 
-        self.barra_menu.add_cascade(label="Reporte", menu=self.ayuda)
+        self.barra_menu.add_cascade(label="Ayuda", menu=self.ayuda)
 
         # ----------------------------------- CONSOLA Y PARTE DE CODIGO ---------------------------------------
 
@@ -140,8 +140,8 @@ class Ventana():
         self.table_error.heading('NO', text='#', anchor=CENTER)
         self.table_error.heading('TIPO', text='Tipo', anchor=CENTER)
         self.table_error.heading('DESCRIPCION', text='Descripcion', anchor=CENTER)
-        self.table_error.heading('LINEA', text='Valor', anchor=CENTER)
-        self.table_error.heading('COLUMNA', text='Ambito', anchor=CENTER)
+        self.table_error.heading('LINEA', text='LINEA', anchor=CENTER)
+        self.table_error.heading('COLUMNA', text='COLUMNA', anchor=CENTER)
         """
         i = 0
         while i < 10:
@@ -284,7 +284,22 @@ class Ventana():
 
 
     def reporte_ast(self):
-        pass
+        print("entro reporte ast")
+        try:
+            # root = Tk()
+            ruta = ""
+            filename = filedialog.askopenfilename(initialdir="/", title="Select file",
+                                                  filetypes=(("TXT files", "*.pdf"), ("all files", "*.*")))
+            ruta = filename
+            if ruta != "":
+                wb.open_new(ruta)
+                return ruta
+            else:
+
+                return None
+
+        except IndexError as e:
+            print(e)
 
     def reporte_tabla_simbolo(self):
         pass

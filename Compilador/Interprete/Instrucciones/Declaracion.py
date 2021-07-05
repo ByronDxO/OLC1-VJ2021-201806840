@@ -15,7 +15,7 @@ class Declaracion(Instruccion):
     def interpretar(self, tree, table):
 
         if self.expresion != None:
-            value = self.expresion.interpretar(tree, table) # Valor a asignar a la variable
+            value = self.expresion.interpretar(tree, table)
             if isinstance(value, Exception): return value
             self.tipo = self.expresion.tipo
         else:

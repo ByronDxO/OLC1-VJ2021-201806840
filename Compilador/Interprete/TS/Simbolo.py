@@ -8,7 +8,7 @@ class Simbolo():
         self.fila = fila
         self.columna = columna
         self.valor = valor
-        # aqui podria ir una referencia self.ref
+
 
 
     def get_id(self):

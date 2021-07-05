@@ -1,19 +1,10 @@
-'''
-    AMBITO -> Es un entorno, es la parte del codigo donde pueden acceder las variables.
-    AMBITO -> Determina en qué partes del programa una entidad puede ser usada.
-
-    En la tabla de simbolos nos facilita usar un diccionario para poder ir encontrando las datos.
-
-'''
-
-
 
 from Interprete.TS.Exception import Exception
 from Interprete.TS.Tipo import *
 
 class TablaSimbolo:
     def __init__(self, anterior = None):
-        self.tabla = {} # Diccionario Vacio
+        self.tabla = {}
         self.anterior = anterior
         self.funciones = []
 

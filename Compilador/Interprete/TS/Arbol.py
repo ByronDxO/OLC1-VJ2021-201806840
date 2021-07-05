@@ -1,8 +1,5 @@
-'''
-    AST   -> Abstract Syntax Tree, almacena nodos.
-    Nodos -> Los nodos del AST siven para realizar todas las instrucciones, funciones, operaciones, entre otros, por medio del interprete.
-    Instruccion -> Sera una clase abstracta
-'''
+
+
 from tkinter import *
 class Arbol():
     
@@ -12,7 +9,7 @@ class Arbol():
         self.excepcion = []
         self.consola = ""
         self.tabla_ts_global = None
-        self.consolaSalida = None
+        self.__consolaSalida = None
         self.dot = ""
         self.contador = 0
 
@@ -57,17 +54,17 @@ class Arbol():
         
     # se implento para que en el read se actualice la consola.
     def getConsolaSalida(self):
-        return self.consolaSalida
+        return self.__consolaSalida
         
     def setConsolaSalida(self, consola):
-        self.consolaSalida = consola
+        self.__consolaSalida = consola
 
     def showConsolaSalida(self, consola):
-        self.consolaSalida.delete("1.0","end")
-        self.consolaSalida.insert(INSERT, consola)
+        self.__consolaSalida.delete("1.0",END)
+        self.__consolaSalida.insert("insert", consola)
 
     # GENERA EL AST
-    def getDot(self, raiz): ## DEVUELVE EL STRING DE LA GRAFICA EN GRAPHVIZ
+    def getDot(self, raiz):
         self.dot = ""
         self.dot += "digraph {\n"
         self.dot += "n0[label=\"" + raiz.getValor().replace("\"", "\\\"") + "\"];\n"

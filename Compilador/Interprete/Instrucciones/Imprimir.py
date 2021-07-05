@@ -1,6 +1,4 @@
-'''
-    isinstance -> Recibe como argumentos un objeto y una clase, y devuelve True si el objeto es una instancia de dicha clase o de una subclase de ella.
-'''
+
 from Interprete.Abstract.Instruccion import Instruccion
 from Interprete.TS.Tipo import Tipo
 from Interprete.TS.Exception import Exception

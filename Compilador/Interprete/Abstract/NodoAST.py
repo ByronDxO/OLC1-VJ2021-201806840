@@ -1,4 +1,5 @@
 class NodoAST():
+    #/////////////////////////////////////////////////metodos para generar dot /////////////////////////////////////////////////
     def __init__(self, valor):
         self.hijos = []
         self.valor = valor

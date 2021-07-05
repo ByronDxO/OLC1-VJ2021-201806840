@@ -14,19 +14,19 @@ class Casteo(Instruccion):
     def interpretar(self, tree, table):
         val = self.expresion.interpretar(tree, table)
         
-        if self.tipo == Tipo.DECIMAL: # Tipo a DOUBLE.
+        if self.tipo == Tipo.DECIMAL:
             
-            if self.expresion.tipo == Tipo.ENTERO: # Este es el tipo de la expresion(int).                      -> Int a Double
+            if self.expresion.tipo == Tipo.ENTERO:
                 try:
                     return float(self.obtenerVal(self.expresion.tipo, val))
                 except:
                     return Exception("Semantico", "No se puede castear para Int a Double.", self.fila, self.columna)
-            elif self.expresion.tipo == Tipo.CADENA: # Este es el tipo de la expresion(String).                 -> String a Double
+            elif self.expresion.tipo == Tipo.CADENA:
                 try:
                     return float(self.obtenerVal(self.expresion.tipo, val))
                 except:
                     return Exception("Semantico", "No se puede castear para String a Double.", self.fila, self.columna)
-            elif self.expresion.tipo == Tipo.CHAR: # Este es el tipo de la expresion(Char).                     -> Char a Double
+            elif self.expresion.tipo == Tipo.CHAR:
                 try:
                     return float(ord(self.obtenerVal(self.expresion.tipo, val)))
                 except:

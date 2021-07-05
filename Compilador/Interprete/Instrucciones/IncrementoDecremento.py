@@ -22,7 +22,7 @@ class IncrementoDecremento(Instruccion):
                 return None
             if simbolo.tipo == Tipo.ENTERO or simbolo.tipo == Tipo.DECIMAL:
                 simbolo.valor = simbolo.valor + 1
-                #self.tipo = simbolo.tipo
+
             else:
                  return Exception("Semantico", "Error de Tipo de dato.", self.fila, self.columna)
        

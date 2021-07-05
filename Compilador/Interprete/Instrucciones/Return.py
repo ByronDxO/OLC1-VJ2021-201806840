@@ -1,7 +1,6 @@
 from Interprete.Abstract.Instruccion import Instruccion
 from Interprete.TS.Exception import Exception
-from Interprete.TS.Tipo import Tipo
-from Interprete.TS.TablaSimbolo import TablaSimbolo
+
 from Interprete.Abstract.NodoAST import NodoAST
 
 class Return(Instruccion):

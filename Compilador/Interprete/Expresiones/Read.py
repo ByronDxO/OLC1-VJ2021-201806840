@@ -16,12 +16,12 @@ class Read(Instruccion):
         self.lectura = None
 
     def interpretar(self, tree, table):
-        print(tree.get_consola()) #IMPRIME LA CONSOLA
-        # print("Ingreso a un READ. Ingrese el valor\r")
+        print("iteracion")
+        print(tree.get_consola())
         
         tree.showConsolaSalida(tree.get_consola())
         self.lectura = simpledialog.askstring("Read()", "Ingrese el Valor:", parent=tree.getConsolaSalida())
-        
+        print(self.lectura)
         return self.lectura
 
     def getNodo(self):

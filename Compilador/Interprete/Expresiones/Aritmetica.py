@@ -19,20 +19,20 @@ class Aritmetica(Instruccion):
         if self.OperacionDer != None:
             der = self.OperacionDer.interpretar(tree, table)
             if isinstance(der, Exception): return der
+#///////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
-
-        if self.operador == Operador_Aritmetico.SUMA: # CUANDO TIENE UN SIGNO POSITIVO (+)
+        if self.operador == Operador_Aritmetico.SUMA: # /////////////////////////////////////////////////CUANDO TIENE UN SIGNO POSITIVO (+)
             # INT
-            if self.OperacionIzq.tipo == Tipo.ENTERO and self.OperacionDer.tipo == Tipo.ENTERO:                         # int + int     = int
+            if self.OperacionIzq.tipo == Tipo.ENTERO and self.OperacionDer.tipo == Tipo.ENTERO:                         # int + int     = int/////////////////////////////////////////////////
                 self.tipo = Tipo.ENTERO
                 return self.obtenerVal(self.OperacionIzq.tipo, izq) + self.obtenerVal(self.OperacionDer.tipo, der) 
-            elif self.OperacionIzq.tipo == Tipo.ENTERO and self.OperacionDer.tipo == Tipo.DECIMAL:                      # int + double  = double
+            elif self.OperacionIzq.tipo == Tipo.ENTERO and self.OperacionDer.tipo == Tipo.DECIMAL:                      # int + double  = double/////////////////////////////////////////////////
                 self.tipo = Tipo.DECIMAL
                 return self.obtenerVal(self.OperacionIzq.tipo, izq) + self.obtenerVal(self.OperacionDer.tipo, der)
-            elif self.OperacionIzq.tipo == Tipo.ENTERO and self.OperacionDer.tipo == Tipo.CADENA:                       # int + string  = string            
+            elif self.OperacionIzq.tipo == Tipo.ENTERO and self.OperacionDer.tipo == Tipo.CADENA:                       # int + string  = string    /////////////////////////////////////////////////
                 self.tipo = Tipo.CADENA
                 return str(self.obtenerVal(self.OperacionIzq.tipo, izq)) + self.obtenerVal(self.OperacionDer.tipo, der)
-            elif self.OperacionIzq.tipo == Tipo.ENTERO and self.OperacionDer.tipo == Tipo.BOOLEANO:                     # int + boolean  = string            
+            elif self.OperacionIzq.tipo == Tipo.ENTERO and self.OperacionDer.tipo == Tipo.BOOLEANO:                     # int + boolean  = string    /////////////////////////////////////////////////
                 self.tipo = Tipo.ENTERO
                 return self.obtenerVal(self.OperacionIzq.tipo, izq) + self.obtenerVal(self.OperacionDer.tipo, der)
             # DOUBLE
